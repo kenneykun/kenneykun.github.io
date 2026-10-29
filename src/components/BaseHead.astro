@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import { SITE_TITLE, SITE_AUTHOR, SITE_LANG } from '../consts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** article 页面传 'article'，其余默认 website */
+  type?: 'website' | 'article';
+  /** 分享卡片图，相对 public/ 的路径或绝对 URL */
+  image?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** 404 之类的页面不要被索引 */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  type = 'website',
+  image,
+  publishedTime,
+  modifiedTime,
+  noindex = false,
+} = Astro.props;
+
+// site 在 astro.config.mjs 里配置；本地 dev 没有 site 时退回当前 origin
+const site = Astro.site ?? new URL(Astro.url.origin);
+// 404 这类页面不生成 canonical（它会被任意路径命中）
+const canonical = noindex ? undefined : new URL(Astro.url.pathname, site);
+const documentTitle = title === SITE_TITLE ? title : `${title} · ${SITE_TITLE}`;
+const imageUrl = image ? new URL(image, site) : undefined;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<meta name="description" content={description} />
+<meta name="author" content={SITE_AUTHOR} />
+{noindex && <meta name="robots" content="noindex" />}
+{canonical && <link rel="canonical" href={canonical.href} />}
+<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:locale" content={SITE_LANG.replace('-', '_')} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{canonical && <meta property="og:url" content={canonical.href} />}
+{imageUrl && <meta property="og:image" content={imageUrl.href} />}
+{publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
+<meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+
+<title>{documentTitle}</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />

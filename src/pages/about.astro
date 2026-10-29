@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_AUTHOR, SITE_EMAIL, SITE_GITHUB } from '../consts';
+---
+
+<BaseLayout title="关于" description="关于这个老玩家和「再来一把」">
+  <article class="prose">
+    <h1>关于</h1>
+    <p>
+      我是{SITE_AUTHOR}，一个还在做游戏的玩家。目前在用 Godot 做一款视觉小说风格的 RPG，一边做一边把过程记在这里。
+    </p>
+    <p>
+      站名叫「再来一把」：玩游戏时最常说的一句话，做游戏时最常有的念头。
+    </p>
+    <p>
+      这里写开发日志、游戏观察，以及偶尔的技术折腾。做游戏的人很多，能坚持把过程写下来的不多，
+      我希望自己是后者。
+    </p>
+    <h2>这个站点</h2>
+    <ul>
+      <li>框架：Astro，纯静态输出，没有数据库和后台</li>
+      <li>写作：Markdown 文件，提交到 Git 即发布</li>
+      <li>托管：Cloudflare Pages</li>
+    </ul>
+    <h2>联系</h2>
+    <p>
+      {SITE_EMAIL && <>邮箱：<code>{SITE_EMAIL}</code></>}
+      {SITE_EMAIL && SITE_GITHUB && <span>　·　</span>}
+      {SITE_GITHUB && <a href={`https://github.com/${SITE_GITHUB}`}>GitHub：@{SITE_GITHUB}</a>}
+      {!SITE_EMAIL && !SITE_GITHUB && <a href="/rss.xml">RSS 订阅</a>}
+    </p>
+  </article>
+</BaseLayout>
